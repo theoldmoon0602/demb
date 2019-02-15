@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/demb
+demb.so
+demb.dylib
+demb.dll
+demb.a
+demb.lib
+demb-test-*
+*.exe
+*.o
+*.obj
+*.lst
