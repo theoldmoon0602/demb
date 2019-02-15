@@ -1,14 +1,11 @@
 import std.stdio;
+import std.string;
 import demb;
 
 void main()
 {
-  auto vm = new VM([
-      ByteCode(OpCode.PUSH, [new NumberObject(5)]),
-      ByteCode(OpCode.PUSH, [new NumberObject(8)]),
-      ByteCode(OpCode.ADD, []),
-      ByteCode(OpCode.PRINT, []),
-  ]);
+  auto program = Demb(readln.strip).toAST.byteCompile;
+  auto vm = new VM(program);
 
   vm.run();
 

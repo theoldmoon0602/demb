@@ -6,5 +6,9 @@ public import
   demb.object,
   demb.bytecode,
   demb.opcode,
-  demb.exception;
+  demb.exception,
+  demb.parser,
+  demb.bytecompiler,
+  demb.ast,
+  demb.peg;
 

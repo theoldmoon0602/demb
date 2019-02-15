@@ -4,5 +4,8 @@
 	],
 	"description": "A minimal D application.",
 	"license": "MIT",
-	"name": "demb"
+	"name": "demb",
+  "dependencies": {
+    "pegged": "~>0.4.4"
+  }
 }
