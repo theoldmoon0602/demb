@@ -11,6 +11,8 @@ AST toAST(ParseTree p) {
     case "Demb.TopLevel":
     case "Demb.Stmt":
     case "Demb.Expression":
+    case "Demb.AddSubExpression":
+    case "Demb.MulDivExpression":
       return p.children[0].toAST;
 
     case "Demb.PrintStmt":
@@ -18,6 +20,15 @@ AST toAST(ParseTree p) {
 
     case "Demb.AddExpression":
       return new AddAST([p.children[0].toAST, p.children[1].toAST]);
+
+    case "Demb.SubExpression":
+      return new SubAST([p.children[0].toAST, p.children[1].toAST]);
+
+    case "Demb.MulExpression":
+      return new MulAST([p.children[0].toAST, p.children[1].toAST]);
+
+    case "Demb.DivExpression":
+      return new DivAST([p.children[0].toAST, p.children[1].toAST]);
 
     case "Demb.Primary":
       return p.children[0].toAST;

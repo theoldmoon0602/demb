@@ -4,9 +4,9 @@ import demb;
 
 void main()
 {
-  auto program = Demb(readln.strip).toAST.byteCompile;
+  auto tree = Demb(readln.strip);
+  auto program = tree.toAST.byteCompile;
   auto vm = new VM(program);
 
   vm.run();
-
 }

@@ -41,6 +41,21 @@ class NumberObject : DembObject {
           return new NumberObject(this.v + number.v);
         }
       }
+      else if (op == "-") {
+        if (auto number = cast(NumberObject)rhs) {
+          return new NumberObject(this.v - number.v);
+        }
+      }
+      else if (op == "*") {
+        if (auto number = cast(NumberObject)rhs) {
+          return new NumberObject(this.v * number.v);
+        }
+      }
+      else if (op == "/") {
+        if (auto number = cast(NumberObject)rhs) {
+          return new NumberObject(this.v / number.v);
+        }
+      }
 
       throw new DembRuntimeException("invalid operator %s or rhs".format(op));
     }

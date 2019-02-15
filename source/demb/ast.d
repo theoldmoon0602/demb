@@ -19,6 +19,30 @@ class AddAST : AST {
     }
 }
 
+class SubAST : AST {
+  public:
+    AST[] args;
+    this(AST[] args) {
+      this.args = args;
+    }
+}
+
+class MulAST : AST {
+  public:
+    AST[] args;
+    this(AST[] args) {
+      this.args = args;
+    }
+}
+
+class DivAST : AST {
+  public:
+    AST[] args;
+    this(AST[] args) {
+      this.args = args;
+    }
+}
+
 class NumberAST : AST {
   public:
     long v;

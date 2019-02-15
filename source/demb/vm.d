@@ -57,6 +57,27 @@ class VM {
             this.push(arg1.binOp("+", arg2));
             break;
             
+          case OpCode.SUB:
+            // pop two arguments from the stack and call opBinary(-), then push returned value
+            DembObject arg2 = this.pop();
+            DembObject arg1 = this.pop();
+            this.push(arg1.binOp("-", arg2));
+            break;
+
+          case OpCode.MUL:
+            // pop two arguments from the stack and call opBinary(*), then push returned value
+            DembObject arg2 = this.pop();
+            DembObject arg1 = this.pop();
+            this.push(arg1.binOp("*", arg2));
+            break;
+
+          case OpCode.DIV:
+            // pop two arguments from the stack and call opBinary(/), then push returned value
+            DembObject arg2 = this.pop();
+            DembObject arg1 = this.pop();
+            this.push(arg1.binOp("/", arg2));
+            break;
+            
           case OpCode.PRINT:
             // pop an argument from the stack and print it to outputstream
             DembObject arg1 = this.pop();

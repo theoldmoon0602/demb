@@ -7,8 +7,13 @@ Demb:
   TopLevel < Expression / Stmt
   Stmt < PrintStmt
   PrintStmt < "print" "(" Expression ")"
-  Expression < AddExpression / Primary
-  AddExpression < Expression "+" Expression
-  Primary < Number
+  Expression < AddSubExpression
+  AddSubExpression < AddExpression / SubExpression / MulDivExpression
+  AddExpression < MulDivExpression "+" AddSubExpression
+  SubExpression < MulDivExpression "-" AddSubExpression
+  MulDivExpression < MulExpression / DivExpression / Primary
+  DivExpression < Primary "/" MulDivExpression
+  MulExpression < Primary "*" MulDivExpression
+  Primary < Number / ("(" Expression ")")
   Number < digit (digit / "_")*
 `));
