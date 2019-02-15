@@ -9,11 +9,11 @@ Demb:
   PrintStmt < "print" "(" Expression ")"
   Expression < AddSubExpression
   AddSubExpression < AddExpression / SubExpression / MulDivExpression
-  AddExpression < MulDivExpression "+" AddSubExpression
-  SubExpression < MulDivExpression "-" AddSubExpression
+  AddExpression < AddSubExpression "+" MulDivExpression
+  SubExpression < AddSubExpression "-" MulDivExpression
   MulDivExpression < MulExpression / DivExpression / Primary
-  DivExpression < Primary "/" MulDivExpression
-  MulExpression < Primary "*" MulDivExpression
+  DivExpression < MulDivExpression "/" Primary
+  MulExpression < MulDivExpression "*" Primary
   Primary < Number / ("(" Expression ")")
   Number < digit (digit / "_")*
 `));
