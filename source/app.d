@@ -32,6 +32,10 @@ void main()
   write("> ");
 
   auto tree = Demb(readln.strip);
+  if (!tree.successful) {
+    writeln("Parse Failed");
+    return;
+  }
   auto program = tree.toAST.byteCompile;
   vm.setProgram(program);
 

@@ -51,3 +51,4 @@ class FloatObject : DembObject {
       return "%f".format(v);
     }
 }
+

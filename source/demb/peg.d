@@ -4,7 +4,7 @@ import pegged.grammar;
 
 mixin(grammar(`
 Demb:
-  TopLevel < Expression / Stmt
+  TopLevel < (Expression / Stmt) :endOfLine
   Stmt < PrintStmt
   PrintStmt < "print" "(" Expression ")"
   Expression < AddSubExpression
