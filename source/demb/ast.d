@@ -69,8 +69,8 @@ class FloatAST : AST {
 
 class StringAST : AST {
   public:
-    ubyte[] v;
-    this(ubyte[] v) {
+    string v;
+    this(string v) {
       this.v = v;
     }
 }

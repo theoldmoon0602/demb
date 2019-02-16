@@ -54,9 +54,9 @@ class FloatObject : DembObject {
 
 class StringObject : DembObject {
   public:
-    ubyte[] v;
+    string v;
 
-    this(ubyte[] v) pure {
+    this(string v) pure {
       this.v = v;
     }
 
@@ -68,7 +68,7 @@ class StringObject : DembObject {
       return "String";
     }
     override string valueString() const {
-      return cast(string)(this.v);
+      return this.v;
     }
 }
 

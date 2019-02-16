@@ -44,6 +44,6 @@ AST toAST(ParseTree p) {
       return new FloatAST(p.matches[0].to!double);
 
     case "Demb.String":
-      return new StringAST(cast(ubyte[])p.matches[0]);
+      return new StringAST(p.matches[0]);
   }
 }
