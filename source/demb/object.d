@@ -20,6 +20,10 @@ class IntegerObject : DembObject {
       this.v = v;
     }
 
+    static string type_static() {
+      return "Integer";
+    }
+
     override string type() const pure {
       return "Integer";
     }
@@ -34,6 +38,10 @@ class FloatObject : DembObject {
 
     this(double v) pure {
       this.v = v;
+    }
+
+    static string type_static() {
+      return "Float";
     }
 
     override string type() const pure {

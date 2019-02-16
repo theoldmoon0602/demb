@@ -62,7 +62,7 @@ class VM {
     DembObject invoke(string name, DembObject[] args) {
       auto f_id = callIdentifier(name, args);
       if (auto f = f_id in builtins) {
-        return (*f).func(args);
+        return f.func(args);
       }
 
       throw new DembRuntimeException("no function %s for arguments %s".format(name, args.map!(x => x.type).array)); 

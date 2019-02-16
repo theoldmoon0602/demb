@@ -8,10 +8,25 @@ void main()
 
   auto vm = new VM();
   vm.setBuiltins([
-      new BuiltinFunc(&builtin_add_integer_integer, "+", ["Integer", "Integer"]),
-      new BuiltinFunc(&builtin_sub_integer_integer, "-", ["Integer", "Integer"]),
-      new BuiltinFunc(&builtin_mul_integer_integer, "*", ["Integer", "Integer"]),
-      new BuiltinFunc(&builtin_div_integer_integer, "/", ["Integer", "Integer"]),
+      mixin(generate_bin_arith!(IntegerObject, IntegerObject, IntegerObject)("+")),
+      mixin(generate_bin_arith!(IntegerObject, IntegerObject, IntegerObject)("-")),
+      mixin(generate_bin_arith!(IntegerObject, IntegerObject, IntegerObject)("*")),
+      mixin(generate_bin_arith!(IntegerObject, IntegerObject, IntegerObject)("/")),
+
+      mixin(generate_bin_arith!(FloatObject, IntegerObject, FloatObject)("+")),
+      mixin(generate_bin_arith!(FloatObject, IntegerObject, FloatObject)("-")),
+      mixin(generate_bin_arith!(FloatObject, IntegerObject, FloatObject)("*")),
+      mixin(generate_bin_arith!(FloatObject, IntegerObject, FloatObject)("/")),
+
+      mixin(generate_bin_arith!(IntegerObject, FloatObject, FloatObject)("+")),
+      mixin(generate_bin_arith!(IntegerObject, FloatObject, FloatObject)("-")),
+      mixin(generate_bin_arith!(IntegerObject, FloatObject, FloatObject)("*")),
+      mixin(generate_bin_arith!(IntegerObject, FloatObject, FloatObject)("/")),
+
+      mixin(generate_bin_arith!(FloatObject, FloatObject, FloatObject)("+")),
+      mixin(generate_bin_arith!(FloatObject, FloatObject, FloatObject)("-")),
+      mixin(generate_bin_arith!(FloatObject, FloatObject, FloatObject)("*")),
+      mixin(generate_bin_arith!(FloatObject, FloatObject, FloatObject)("/")),
   ]);
 
   write("> ");

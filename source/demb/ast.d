@@ -50,3 +50,11 @@ class IntegerAST : AST {
       this.v = v;
     }
 }
+
+class FloatAST : AST {
+  public:
+    double v;
+    this(double v) {
+      this.v = v;
+    }
+}

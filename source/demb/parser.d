@@ -4,6 +4,7 @@ import pegged.grammar;
 import demb.peg;
 import demb.ast;
 import std.conv;
+import std.string;
 
 AST toAST(ParseTree p) {
   final switch (p.name) {
@@ -34,10 +35,9 @@ AST toAST(ParseTree p) {
       return p.children[0].toAST;
 
     case "Demb.Integer":
-      return new IntegerAST(p.matches[0].to!long);
+      return new IntegerAST(p.matches[0].replace("_", "").to!long);
+      
+    case "Demb.Float":
+      return new FloatAST(p.matches[0].replace("_", "").to!double);
   }
-}
-unittest {
-  auto ast = Demb("1 + 1").toAST;
-  assert((cast(AddAST)ast));
 }

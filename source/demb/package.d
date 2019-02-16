@@ -11,6 +11,5 @@ public import
   demb.bytecompiler,
   demb.ast,
   demb.peg,
-  demb.func,
-  demb.builtin;
+  demb.func;
 

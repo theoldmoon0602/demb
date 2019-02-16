@@ -9,8 +9,11 @@ import std.format;
 ByteCode[] byteCompile(AST ast) {
   ByteCode[] codes = [];
 
-  if (auto numberAST = cast(IntegerAST)ast) {
-    codes ~= ByteCode(OpCode.PUSH, [new IntegerObject(numberAST.v)]);
+  if (auto integerAST = cast(IntegerAST)ast) {
+    codes ~= ByteCode(OpCode.PUSH, [new IntegerObject(integerAST.v)]);
+  }
+  else if (auto floatAST = cast(FloatAST)ast) {
+    codes ~= ByteCode(OpCode.PUSH, [new FloatObject(floatAST.v)]);
   }
   else if (auto addAST = cast(AddAST)ast) {
     assert(addAST.args.length == 2, "bad number of arguments for operator +");
