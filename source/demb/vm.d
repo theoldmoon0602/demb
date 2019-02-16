@@ -109,6 +109,14 @@ class VM {
             auto r = this.invoke("/", [arg1, arg2]);
             this.push(r);
             break;
+
+          case OpCode.CONCAT:
+            // pop two arguments from the stack and call opBinary(~), then push returned value
+            DembObject arg2 = this.pop();
+            DembObject arg1 = this.pop();
+            auto r = this.invoke("~", [arg1, arg2]);
+            this.push(r);
+            break;
             
           case OpCode.PRINT:
             // pop an argument from the stack and print it to outputstream

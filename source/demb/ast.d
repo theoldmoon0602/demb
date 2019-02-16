@@ -43,6 +43,14 @@ class DivAST : AST {
     }
 }
 
+class CatAST : AST {
+  public:
+    AST[] args;
+    this(AST[] args) {
+      this.args = args;
+    }
+}
+
 class IntegerAST : AST {
   public:
     long v;
@@ -55,6 +63,14 @@ class FloatAST : AST {
   public:
     double v;
     this(double v) {
+      this.v = v;
+    }
+}
+
+class StringAST : AST {
+  public:
+    ubyte[] v;
+    this(ubyte[] v) {
       this.v = v;
     }
 }

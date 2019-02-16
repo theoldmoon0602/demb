@@ -7,5 +7,6 @@ enum OpCode {
   SUB,
   MUL,
   DIV,
+  CONCAT,
   PRINT,
 }

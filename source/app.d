@@ -27,12 +27,15 @@ void main()
       mixin(generate_bin_arith!(FloatObject, FloatObject, FloatObject)("-")),
       mixin(generate_bin_arith!(FloatObject, FloatObject, FloatObject)("*")),
       mixin(generate_bin_arith!(FloatObject, FloatObject, FloatObject)("/")),
+
+      mixin(generate_bin_arith!(StringObject, StringObject, StringObject)("~")),
   ]);
 
   write("> ");
 
   auto tree = Demb(readln.strip);
   if (!tree.successful) {
+    writeln(tree);
     writeln("Parse Failed");
     return;
   }

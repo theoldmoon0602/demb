@@ -52,3 +52,23 @@ class FloatObject : DembObject {
     }
 }
 
+class StringObject : DembObject {
+  public:
+    ubyte[] v;
+
+    this(ubyte[] v) pure {
+      this.v = v;
+    }
+
+    static string type_static() {
+      return "String";
+    }
+
+    override string type() const pure {
+      return "String";
+    }
+    override string valueString() const {
+      return cast(string)(this.v);
+    }
+}
+

@@ -13,6 +13,7 @@ AST toAST(ParseTree p) {
     case "Demb.Expression":
     case "Demb.AddSubExpression":
     case "Demb.MulDivExpression":
+    case "Demb.CatExpression":
       return p.children[0].toAST;
 
     case "Demb.PrintStmt":
@@ -30,6 +31,9 @@ AST toAST(ParseTree p) {
     case "Demb.DivExpression":
       return new DivAST([p.children[0].toAST, p.children[1].toAST]);
 
+    case "Demb.ConCatExpression":
+      return new CatAST([p.children[0].toAST, p.children[1].toAST]);
+
     case "Demb.Primary":
       return p.children[0].toAST;
 
@@ -38,5 +42,8 @@ AST toAST(ParseTree p) {
       
     case "Demb.Float":
       return new FloatAST(p.matches[0].to!double);
+
+    case "Demb.String":
+      return new StringAST(cast(ubyte[])p.matches[0]);
   }
 }
