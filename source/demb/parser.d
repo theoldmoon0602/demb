@@ -33,8 +33,8 @@ AST toAST(ParseTree p) {
     case "Demb.Primary":
       return p.children[0].toAST;
 
-    case "Demb.Number":
-      return new NumberAST(p.matches[0].to!long);
+    case "Demb.Integer":
+      return new IntegerAST(p.matches[0].to!long);
   }
 }
 unittest {

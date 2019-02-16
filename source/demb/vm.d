@@ -4,7 +4,11 @@ import demb.exception;
 import demb.object;
 import demb.bytecode;
 import demb.opcode;
+import demb.func;
 import std.stdio;
+import std.format;
+import std.algorithm;
+import std.array;
 
 /**
  * Virtual Machine
@@ -13,15 +17,26 @@ import std.stdio;
  */
 class VM {
   protected:
+    BuiltinFunc[string] builtins;
     DembObject[] stack;
     ByteCode[] program;
     uint sp = 0;
     uint ip = 0;
 
   public:
-    this(ByteCode[] program) {
+    this() {
       this.stack = new DembObject[](1);
+    }
+
+    void setBuiltins(BuiltinFunc[] builtins) {
+      foreach (f; builtins) {
+        this.builtins[f.identifier] = f;
+      }
+    }
+
+    void setProgram(ByteCode[] program) {
       this.program = program;
+      this.ip = 0;
     }
 
     void push(DembObject o) {
@@ -40,6 +55,19 @@ class VM {
       return this.stack[--sp];
     }
 
+    string callIdentifier(string name, DembObject[] args) {
+      return ([name] ~ args.map!(x => x.type).array).join("_");
+    }
+
+    DembObject invoke(string name, DembObject[] args) {
+      auto f_id = callIdentifier(name, args);
+      if (auto f = f_id in builtins) {
+        return (*f).func(args);
+      }
+
+      throw new DembRuntimeException("no function %s for arguments %s".format(name, args.map!(x => x.type).array)); 
+    }
+
     void run() {
       while (ip < program.length) {
         // fetch
@@ -54,28 +82,32 @@ class VM {
             // pop two arguments from the stack and call opBinary(+), then push returned value
             DembObject arg2 = this.pop();
             DembObject arg1 = this.pop();
-            this.push(arg1.binOp("+", arg2));
+            auto r = this.invoke("+", [arg1, arg2]);
+            this.push(r);
             break;
             
           case OpCode.SUB:
             // pop two arguments from the stack and call opBinary(-), then push returned value
             DembObject arg2 = this.pop();
             DembObject arg1 = this.pop();
-            this.push(arg1.binOp("-", arg2));
+            auto r = this.invoke("-", [arg1, arg2]);
+            this.push(r);
             break;
 
           case OpCode.MUL:
             // pop two arguments from the stack and call opBinary(*), then push returned value
             DembObject arg2 = this.pop();
             DembObject arg1 = this.pop();
-            this.push(arg1.binOp("*", arg2));
+            auto r = this.invoke("*", [arg1, arg2]);
+            this.push(r);
             break;
 
           case OpCode.DIV:
             // pop two arguments from the stack and call opBinary(/), then push returned value
             DembObject arg2 = this.pop();
             DembObject arg1 = this.pop();
-            this.push(arg1.binOp("/", arg2));
+            auto r = this.invoke("/", [arg1, arg2]);
+            this.push(r);
             break;
             
           case OpCode.PRINT:

@@ -10,5 +10,7 @@ public import
   demb.parser,
   demb.bytecompiler,
   demb.ast,
-  demb.peg;
+  demb.peg,
+  demb.func,
+  demb.builtin;
 

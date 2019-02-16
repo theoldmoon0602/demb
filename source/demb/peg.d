@@ -14,6 +14,6 @@ Demb:
   MulDivExpression < MulExpression / DivExpression / Primary
   DivExpression < MulDivExpression "/" Primary
   MulExpression < MulDivExpression "*" Primary
-  Primary < Number / ("(" Expression ")")
-  Number < digit (digit / "_")*
+  Primary < Integer / ("(" Expression ")")
+  Integer < digit (digit / "_")*
 `));

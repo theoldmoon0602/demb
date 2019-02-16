@@ -43,7 +43,7 @@ class DivAST : AST {
     }
 }
 
-class NumberAST : AST {
+class IntegerAST : AST {
   public:
     long v;
     this(long v) {
