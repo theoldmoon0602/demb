@@ -33,10 +33,16 @@ void main()
 
   write("> ");
 
-  auto tree = Demb(readln.strip);
+  string source = "";
+  foreach (line; stdin.byLine) {
+    source ~= line.strip ~ "\r\n";
+  }
+
+  auto tree = Demb(source);
   if (!tree.successful) {
     writeln(tree);
     writeln("Parse Failed");
+    writeln(source);
     return;
   }
   auto program = tree.toAST.byteCompile;

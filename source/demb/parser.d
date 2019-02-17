@@ -3,6 +3,8 @@ module demb.parser;
 import pegged.grammar;
 import demb.peg;
 import demb.ast;
+import std.algorithm;
+import std.array;
 import std.conv;
 
 AST toAST(ParseTree p) {
@@ -15,6 +17,9 @@ AST toAST(ParseTree p) {
     case "Demb.MulDivExpression":
     case "Demb.CatExpression":
       return p.children[0].toAST;
+
+    case "Demb.Stmts":
+      return new StmtsAST(p.children.map!(x => x.toAST).array);
 
     case "Demb.PrintStmt":
       return new PrintAST([p.children[0].toAST]);

@@ -60,6 +60,11 @@ ByteCode[] byteCompile(AST ast) {
     }
     codes ~= ByteCode(OpCode.PRINT, []);
   }
+  else if (auto stmtsAST = cast(StmtsAST)ast) {
+    foreach (stmt; stmtsAST.stmts) {
+      codes ~= stmt.byteCompile;
+    }
+  }
   else {
     assert(false, "unimplemented AST: %s".format(ast));
   }

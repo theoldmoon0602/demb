@@ -3,6 +3,14 @@ module demb.ast;
 abstract class AST {
 }
 
+class StmtsAST : AST {
+  public:
+    AST[] stmts;
+    this(AST[] stmts) {
+      this.stmts = stmts;
+    }
+}
+
 class PrintAST : AST {
   public:
     AST[] args;

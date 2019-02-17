@@ -4,8 +4,9 @@ import pegged.grammar;
 
 mixin(grammar(`
 Demb:
-  TopLevel < (Expression / Stmt)
-  Stmt < PrintStmt
+  TopLevel < Stmts
+  Stmts < Stmt+
+  Stmt < (PrintStmt / Expression) :EndStmt
   PrintStmt < "print" "(" Expression ")"
   Expression < AddSubExpression
   AddSubExpression < AddExpression / SubExpression / MulDivExpression
@@ -21,4 +22,7 @@ Demb:
   Char <~ (backslash doublequote / backslash backslash / (!doublequote .))
   Float <~ digit (digit / :"_")* "." digit (digit / :"_")*
   Integer <~ digit (digit / :"_")*
+
+  EndStmt <: ";" / endOfLine / eoi
+  Spacing <: (' ' / '\t' )*
 `));
