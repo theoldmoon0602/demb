@@ -1,12 +1,12 @@
 import std.stdio;
 import std.string;
-
+import std.array;
 import demb;
+import msgpack;
 
 void main()
 {
 
-  /*
   auto vm = new VM();
   vm.setBuiltins([
       mixin(generate_bin_arith!(IntegerObject, IntegerObject, IntegerObject)("+")),
@@ -31,7 +31,6 @@ void main()
 
       mixin(generate_bin_arith!(StringObject, StringObject, StringObject)("~")),
   ]);
-  */
 
   write("> ");
 
@@ -49,5 +48,7 @@ void main()
   }
   auto ctx = new CompileContext();
   auto program = tree.toAST.analyze(ctx).bytecompile;
-  writeln(program);
+  auto decoded = StreamingUnpacker(program).array;
+
+  vm.run(decoded, ctx);
 }

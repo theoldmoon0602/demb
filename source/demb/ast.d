@@ -108,7 +108,7 @@ class IdentifierAST : AST {
       this.v = v;
     }
     override AAST analyze(CompileContext ctx) {
-      if (ctx.hasLocalvar(v)) {
+      if (ctx.hasVar(v)) {
         return new IdentifierIDAAST(ctx.getVarId(v));
       }
       throw new DembCompileException("No local variable with name %s".format(v));

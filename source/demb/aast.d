@@ -4,6 +4,7 @@ import demb.bytecode;
 import demb.exception;
 import demb.opcode;
 import std.typecons;
+import std.string;
 import msgpack;
 
 /**
@@ -28,6 +29,14 @@ class StmtsAAST: AAST {
       }
       return codes;
     }
+
+    override string toString() {
+      string[] s = [];
+      foreach (stmt; stmts) {
+        s ~= stmt.toString.replace("\n", "\n  ");
+      }
+      return s.join("\n");
+    }
 }
 
 class AssignAAST: AAST {
@@ -42,6 +51,9 @@ class AssignAAST: AAST {
     override ubyte[] compile() {
       throw new DembCompileException("Unimplemented");
     }
+    override string toString() {
+      return ident.toString ~ " = " ~ expr.toString;
+    }
 }
 
 class PrintAAST: AAST {
@@ -51,7 +63,10 @@ class PrintAAST: AAST {
       this.arg = arg;
     }
     override ubyte[] compile() {
-      return arg.compile() ~ pack(OpCode.PRINT);
+      return arg.compile() ~ pack(tuple!(int)(OpCode.PRINT));
+    }
+    override string toString() {
+      return "print(" ~ arg.toString ~ ")";
     }
 }
 
@@ -63,7 +78,10 @@ class BinopAAST(OpCode opcode): AAST {
       this.right = right;
     }
     override ubyte[] compile() {
-      return left.compile() ~ right.compile() ~ pack(opcode);
+      return left.compile() ~ right.compile() ~ pack(tuple!(int)(opcode));
+    }
+    override string toString() {
+      return "%s %s %s".format(left.toString, opcode, right.toString);
     }
 }
 
@@ -83,6 +101,9 @@ class LiteralAAST(T, OpCode opcode): AAST {
     override ubyte[] compile() {
       return pack(tuple(opcode, v));
     }
+    override string toString() {
+      return "%s".format(v);
+    }
 }
 alias IntegerAAST = LiteralAAST!(long, OpCode.PUSHI);
 alias FloatAAST = LiteralAAST!(double, OpCode.PUSHF);
@@ -96,6 +117,9 @@ class StringAAST: AAST {
     override ubyte[] compile() {
       return pack(tuple(OpCode.PUSHS, this.id));
     }
+    override string toString() {
+      return "string(id=%d)".format(this.id);
+    }
 }
 
 class IdentifierIDAAST: AAST {
@@ -107,5 +131,7 @@ class IdentifierIDAAST: AAST {
     override ubyte[] compile() {
       throw new DembCompileException("Unimplemented");
     }
-
+    override string toString() {
+      return "name(id=%d)".format(this.id);
+    }
 }
