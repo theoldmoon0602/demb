@@ -49,7 +49,7 @@ class AssignAAST: AAST {
       this.expr = expr;
     }
     override ubyte[] compile() {
-      throw new DembCompileException("Unimplemented");
+      return expr.compile() ~ pack(tuple!(uint, uint)(OpCode.ASSIGN, ident.id));
     }
     override string toString() {
       return ident.toString ~ " = " ~ expr.toString;
@@ -129,7 +129,7 @@ class IdentifierIDAAST: AAST {
       this.id = id;
     }
     override ubyte[] compile() {
-      throw new DembCompileException("Unimplemented");
+      return pack(tuple(OpCode.LOAD, this.id));
     }
     override string toString() {
       return "name(id=%d)".format(this.id);

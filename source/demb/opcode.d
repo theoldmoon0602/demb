@@ -9,5 +9,7 @@ enum OpCode {
   MUL,
   DIV,
   CONCAT,
+  ASSIGN,
+  LOAD,
   PRINT,
 }

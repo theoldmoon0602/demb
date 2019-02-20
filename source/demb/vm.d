@@ -41,6 +41,14 @@ class Frame {
       return stack[sp];
     }
 
+    void set(uint id, DembObject obj) {
+      locals[id] = obj;
+    }
+
+    DembObject get(uint id) {
+      return locals[id];
+    }
+
 }
 
 class VM {
@@ -110,7 +118,9 @@ class VM {
             break;
             
           case PUSHS:
-            frame.push(new StringObject(ctx.getString(codes[ip][1].as!(uint))));
+            auto str_id = codes[ip][1].as!(uint);
+            auto strobj = new StringObject(ctx.getString(str_id));
+            frame.push(strobj);
             break;
 
           case ADD:
@@ -124,6 +134,17 @@ class VM {
             frame.push(r);
             break;
 
+          case ASSIGN:
+            auto arg1 = frame.pop();
+            auto var_id = codes[ip][1].as!(uint);
+            frame.set(var_id, arg1);
+            break;
+
+          case LOAD:
+            auto var_id = codes[ip][1].as!(uint);
+            auto v = frame.get(var_id);
+            frame.push(v);
+            break;
 
           case PRINT:
             DembObject arg1 = frame.pop();
