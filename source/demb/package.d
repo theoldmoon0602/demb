@@ -2,7 +2,6 @@ module demb;
 
 
 public import
-  demb.vm,
   demb.object,
   demb.bytecode,
   demb.opcode,
@@ -10,6 +9,8 @@ public import
   demb.parser,
   demb.bytecompiler,
   demb.ast,
+  demb.aast,
   demb.peg,
-  demb.func;
+  demb.func,
+  demb.compilecontext;
 

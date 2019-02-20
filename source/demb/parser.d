@@ -22,22 +22,25 @@ AST toAST(ParseTree p) {
       return new StmtsAST(p.children.map!(x => x.toAST).array);
 
     case "Demb.PrintStmt":
-      return new PrintAST([p.children[0].toAST]);
+      return new PrintAST(p.children[0].toAST);
+
+    case "Demb.AssignStmt":
+      return new AssignAST(cast(IdentifierAST)(p.children[0].toAST), p.children[1].toAST);
 
     case "Demb.AddExpression":
-      return new AddAST([p.children[0].toAST, p.children[1].toAST]);
+      return new BinAddAST(p.children[0].toAST, p.children[1].toAST);
 
     case "Demb.SubExpression":
-      return new SubAST([p.children[0].toAST, p.children[1].toAST]);
+      return new BinSubAST(p.children[0].toAST, p.children[1].toAST);
 
     case "Demb.MulExpression":
-      return new MulAST([p.children[0].toAST, p.children[1].toAST]);
+      return new BinMulAST(p.children[0].toAST, p.children[1].toAST);
 
     case "Demb.DivExpression":
-      return new DivAST([p.children[0].toAST, p.children[1].toAST]);
+      return new BinDivAST(p.children[0].toAST, p.children[1].toAST);
 
     case "Demb.ConCatExpression":
-      return new CatAST([p.children[0].toAST, p.children[1].toAST]);
+      return new BinCatAST(p.children[0].toAST, p.children[1].toAST);
 
     case "Demb.Primary":
       return p.children[0].toAST;
@@ -50,5 +53,8 @@ AST toAST(ParseTree p) {
 
     case "Demb.String":
       return new StringAST(p.matches[0]);
+
+    case "Demb.Identifier":
+      return new IdentifierAST(p.matches[0]);
   }
 }

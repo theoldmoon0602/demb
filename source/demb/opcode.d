@@ -1,8 +1,9 @@
 module demb.opcode;
 
-
 enum OpCode {
-  PUSH,
+  PUSHI,
+  PUSHF,
+  PUSHS,
   ADD,
   SUB,
   MUL,

@@ -8,12 +8,22 @@ import demb.exception;
 struct ByteCode {
   public:
     OpCode code;
-    DembObject[] args;
+    ubyte[] args;
 }
 
-DembObject getArg(ByteCode b, uint n) {
-  if (b.args.length <= n) {
-    throw new DembRuntimeException("Trying to unexisting number of argument %d".format(n));
+
+
+ByteCode bytecode(T...)(OpCode code, T args) {
+  ubyte[] f(U)(U x) {
+    auto buf = new ubyte[](U.sizeof);
+    buf.write!(U)(x, 0);
+    return buf;
   }
-  return b.args[n];
+
+  ubyte[] argbuf = [];
+  foreach (arg; argx) {
+    argbuf ~= f(arg);
+  }
+
+  return ByteCode(code, argbuf);
 }

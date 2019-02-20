@@ -1,6 +1,7 @@
 {
 	"fileVersion": 1,
 	"versions": {
+		"msgpack-d": "0.9.6",
 		"pegged": "0.4.4"
 	}
 }

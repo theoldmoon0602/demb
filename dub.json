@@ -2,10 +2,11 @@
 	"authors": [
 		"theoldmoon0602"
 	],
+	"dependencies": {
+		"msgpack-d": "~>0.9.6",
+		"pegged": "~>0.4.4"
+	},
 	"description": "A minimal D application.",
 	"license": "MIT",
-	"name": "demb",
-  "dependencies": {
-    "pegged": "~>0.4.4"
-  }
+	"name": "demb"
 }

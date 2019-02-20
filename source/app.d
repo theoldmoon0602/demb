@@ -6,6 +6,7 @@ import demb;
 void main()
 {
 
+  /*
   auto vm = new VM();
   vm.setBuiltins([
       mixin(generate_bin_arith!(IntegerObject, IntegerObject, IntegerObject)("+")),
@@ -30,6 +31,7 @@ void main()
 
       mixin(generate_bin_arith!(StringObject, StringObject, StringObject)("~")),
   ]);
+  */
 
   write("> ");
 
@@ -45,8 +47,7 @@ void main()
     writeln(source);
     return;
   }
-  auto program = tree.toAST.byteCompile;
-  vm.setProgram(program);
-
-  vm.run();
+  auto ctx = new CompileContext();
+  auto program = tree.toAST.analyze(ctx).bytecompile;
+  writeln(program);
 }
