@@ -8,15 +8,22 @@ import std.array;
 import std.conv;
 
 AST toAST(ParseTree p) {
+
   final switch (p.name) {
     case "Demb":
-    case "Demb.TopLevel":
     case "Demb.Stmt":
+    case "Demb.BlockStmt":
     case "Demb.Expression":
     case "Demb.AddSubExpression":
     case "Demb.MulDivExpression":
     case "Demb.CatExpression":
       return p.children[0].toAST;
+
+    case "Demb.TopLevel":
+      return new TopLevelAST(p.children.map!(x => cast(DefunAST)x.toAST).array);
+
+    case "Demb.DefunStmt":
+      return new DefunAST(cast(IdentifierAST)p.children[0].toAST, cast(StmtsAST)p.children[1].toAST);
 
     case "Demb.Stmts":
       return new StmtsAST(p.children.map!(x => x.toAST).array);

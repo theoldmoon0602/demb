@@ -10,6 +10,34 @@ abstract class AST {
     abstract AAST analyze(CompileContext ctx);
 }
 
+class TopLevelAST: AST {
+  public:
+    DefunAST[] defuns;
+
+    this(DefunAST[] defuns) {
+      this.defuns = defuns;
+    }
+    override AAST analyze(CompileContext ctx) {
+      throw new DembCompileException("Unexpected Call");
+    }
+}
+
+class DefunAST: AST {
+  public:
+    IdentifierAST name;
+    StmtsAST proc;
+
+    this(IdentifierAST name, StmtsAST proc) {
+      this.name = name;
+      this.proc = proc;
+    }
+
+    override AAST analyze(CompileContext ctx) {
+      ctx.addGlobal(name.v);
+      return proc.analyze(ctx);
+    }
+}
+
 class StmtsAST : AST {
   public:
     AST[] stmts;

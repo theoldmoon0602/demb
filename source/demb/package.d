@@ -12,6 +12,7 @@ public import
   demb.ast,
   demb.aast,
   demb.peg,
-  demb.func,
+  demb.builtin,
+  demb.compileresult,
   demb.compilecontext;
 

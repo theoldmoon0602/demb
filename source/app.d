@@ -39,16 +39,15 @@ void main()
     source ~= line.strip ~ "\r\n";
   }
 
-  auto tree = Demb(source);
+  auto tree = parse(source);
   if (!tree.successful) {
     writeln(tree);
     writeln("Parse Failed");
     writeln(source);
     return;
   }
-  auto ctx = new CompileContext();
-  auto program = tree.toAST.analyze(ctx).bytecompile;
-  auto decoded = StreamingUnpacker(program).array;
+  auto program = compile(cast(TopLevelAST)tree.toAST).pack;
+  auto compileresult = program.unpack!(CompileResult);
 
-  vm.run(decoded, ctx);
+  vm.run(compileresult);
 }

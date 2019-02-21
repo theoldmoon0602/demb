@@ -1,14 +1,16 @@
 module demb.vm;
 
 import demb.object;
-import demb.func;
+import demb.builtin;
 import demb.opcode;
-import demb.compilecontext;
+import demb.compileresult;
 import demb.exception;
+import demb.func;
 import msgpack;
 import std.stdio;
 import std.algorithm;
 import std.array;
+import std.conv;
 import std.format;
 
 class Frame {
@@ -55,8 +57,22 @@ class VM {
   protected:
     Frame[] frames;
     BuiltinFunc[string] builtins;
+
+    CompiledFunction[] func_pool;
+    string[] string_pool;
+
     uint frame_id;
-    uint ip;
+
+    static string[OpCode] binopmap;
+    static this() {
+      this.binopmap = [
+        OpCode.ADD: "+",
+        OpCode.SUB: "-",
+        OpCode.MUL: "*",
+        OpCode.DIV: "/",
+        OpCode.CONCAT: "~",
+      ];
+    }
   public:
     this() {
       frames = [];
@@ -82,6 +98,7 @@ class VM {
       throw new DembRuntimeException("no function %s for arguments %s".format(name, args.map!(x => x.type).array)); 
     }
 
+
     void newFrame(uint local_count) {
       if (frame_id == frames.length) {
         frames ~= new Frame(local_count);
@@ -94,17 +111,10 @@ class VM {
       return this.frames[frame_id];
     }
 
-    void run(Unpacked[] codes, CompileContext ctx) {
-      this.ip = 0;
-      this.newFrame(cast(uint)ctx.local_count);
-      string[OpCode] binopmap = [
-        OpCode.ADD: "+",
-        OpCode.SUB: "-",
-        OpCode.MUL: "*",
-        OpCode.DIV: "/",
-        OpCode.CONCAT: "~",
-      ];
-
+    void invoke(uint func_offset) {
+      int ip = 0;
+      auto codes = StreamingUnpacker(this.func_pool[func_offset].proc).array;
+      this.newFrame(this.func_pool[func_offset].local_count);
 
       while (ip < codes.length){
         auto opcode = cast(OpCode)(codes[ip][0].as!(uint));
@@ -119,7 +129,7 @@ class VM {
             
           case PUSHS:
             auto str_id = codes[ip][1].as!(uint);
-            auto strobj = new StringObject(ctx.getString(str_id));
+            auto strobj = new StringObject(string_pool[str_id]);
             frame.push(strobj);
             break;
 
@@ -154,5 +164,12 @@ class VM {
 
         ip++;
       }
+    }
+
+    void run(CompileResult c) {
+      string_pool = c.strs;
+      func_pool = c.funcs;
+
+      this.invoke(c.main_offset);
     }
 }
