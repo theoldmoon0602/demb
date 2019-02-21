@@ -11,5 +11,6 @@ enum OpCode {
   CONCAT,
   ASSIGN,
   LOAD,
+  CALL,
   PRINT,
 }

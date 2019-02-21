@@ -56,6 +56,20 @@ class AssignAAST: AAST {
     }
 }
 
+class CallAAST: AAST {
+  public:
+    IdentifierIDAAST funcid;
+    this(IdentifierIDAAST funcid) {
+      this.funcid = funcid;
+    }
+    override ubyte[] compile() {
+      return pack(tuple(OpCode.CALL, funcid.id));
+    }
+    override string toString() {
+      return "call(" ~ funcid.toString ~ ")";
+    }
+}
+
 class PrintAAST: AAST {
   public:
     AAST arg;

@@ -72,6 +72,20 @@ class AssignAST: AST {
     }
 }
 
+class CallAST: AST{ 
+  public:
+    IdentifierAST name;
+    this(IdentifierAST name) {
+      this.name = name;
+    }
+    override AAST analyze(CompileContext ctx) {
+      if (!ctx.hasGlobal(name.v)) {
+        throw new DembCompileException("No such function %s".format(name.v));
+      }
+      return new CallAAST(new IdentifierIDAAST(ctx.getGlobalId(name.v)));
+    }
+}
+
 class PrintAST : AST {
   public:
     AST arg;

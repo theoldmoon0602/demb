@@ -4,7 +4,7 @@ import pegged.grammar;
 
 mixin(grammar(`
 Demb:
-  TopLevel < DefunStmt+
+  TopLevel < (DefunStmt :EndDefun)* DefunStmt? 
   DefunStmt < "func" :(Spacing+) Identifier "(" ")" BlockStmt
   BlockStmt < "{" Stmts "}"
   Stmts < (Stmt :EndStmt)* (Stmt :EndStmt?)?
@@ -18,8 +18,10 @@ Demb:
   MulDivExpression < MulExpression / DivExpression / CatExpression
   DivExpression < MulDivExpression "/" CatExpression
   MulExpression < MulDivExpression "*" CatExpression
-  CatExpression < ConCatExpression / Primary
-  ConCatExpression < CatExpression "~" Primary
+  CatExpression < ConCatExpression / CallLevelExpression
+  ConCatExpression < CatExpression "~" CallLevelExpression
+  CallLevelExpression < CallExpression / Primary
+  CallExpression < Identifier "(" ")"
   Primary < Float / Integer / String / Identifier / ("(" Expression ")")
   String <~ :doublequote Char* :doublequote
   Char <~ (backslash doublequote / backslash backslash / (!doublequote .))
@@ -27,7 +29,8 @@ Demb:
   Integer <~ digit (digit / :"_")*
   Identifier <~ identifier
 
-  EndStmt <: ";" / endOfLine / eoi
+  EndDefun < endOfLine / eoi
+  EndStmt < ";" / endOfLine / eoi
   Spacing <: (' ' / '\t' )*
 `));
 

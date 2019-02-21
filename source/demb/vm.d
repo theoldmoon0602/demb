@@ -99,6 +99,10 @@ class VM {
     }
 
 
+    void discardFrame() {
+      frame_id--;
+    }
+
     void newFrame(uint local_count) {
       if (frame_id == frames.length) {
         frames ~= new Frame(local_count);
@@ -160,10 +164,16 @@ class VM {
             DembObject arg1 = frame.pop();
             writeln(arg1.valueString);
             break;
+
+          case CALL:
+            auto offset = codes[ip][1].as!(uint);
+            this.invoke(offset);
+            break;
         }
 
         ip++;
       }
+      discardFrame();
     }
 
     void run(CompileResult c) {

@@ -8,7 +8,6 @@ import std.array;
 import std.conv;
 
 AST toAST(ParseTree p) {
-
   final switch (p.name) {
     case "Demb":
     case "Demb.Stmt":
@@ -16,6 +15,7 @@ AST toAST(ParseTree p) {
     case "Demb.Expression":
     case "Demb.AddSubExpression":
     case "Demb.MulDivExpression":
+    case "Demb.CallLevelExpression":
     case "Demb.CatExpression":
       return p.children[0].toAST;
 
@@ -48,6 +48,9 @@ AST toAST(ParseTree p) {
 
     case "Demb.ConCatExpression":
       return new BinCatAST(p.children[0].toAST, p.children[1].toAST);
+
+    case "Demb.CallExpression":
+      return new CallAST(cast(IdentifierAST)p.children[0].toAST);
 
     case "Demb.Primary":
       return p.children[0].toAST;
