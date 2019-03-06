@@ -34,6 +34,9 @@ AST toAST(ParseTree p) {
     case "Demb.AssignStmt":
       return new AssignAST(cast(IdentifierAST)(p.children[0].toAST), p.children[1].toAST);
 
+    case "Demb.ReturnStmt":
+      return new ReturnAST(p.children[0].toAST);
+
     case "Demb.AddExpression":
       return new BinAddAST(p.children[0].toAST, p.children[1].toAST);
 

@@ -13,4 +13,5 @@ enum OpCode {
   LOAD,
   CALL,
   PRINT,
+  RETURN,
 }

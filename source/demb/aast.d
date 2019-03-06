@@ -56,6 +56,21 @@ class AssignAAST: AAST {
     }
 }
 
+class ReturnAAST: AAST {
+  public:
+    AAST expr;
+
+    this(AAST expr) {
+      this.expr = expr;
+    }
+    override ubyte[] compile() {
+      return this.expr.compile() ~ pack(tuple!(uint)(OpCode.RETURN));
+    }
+    override string toString() {
+      return "return %s".format(expr.toString);
+    }
+}
+
 class CallAAST: AAST {
   public:
     IdentifierIDAAST funcid;

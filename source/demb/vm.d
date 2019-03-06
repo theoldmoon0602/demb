@@ -100,19 +100,24 @@ class VM {
 
 
     void discardFrame() {
+      assert(frame_id > 0);
       frame_id--;
     }
 
     void newFrame(uint local_count) {
+      assert(frame_id <= frames.length);
+
       if (frame_id == frames.length) {
         frames ~= new Frame(local_count);
       } else {
         frames[frame_id] = new Frame(local_count);
       }
+
+      frame_id++;
     }
 
     @property Frame frame() {
-      return this.frames[frame_id];
+      return this.frames[frame_id-1];
     }
 
     void invoke(uint func_offset) {
@@ -120,7 +125,7 @@ class VM {
       auto codes = StreamingUnpacker(this.func_pool[func_offset].proc).array;
       this.newFrame(this.func_pool[func_offset].local_count);
 
-      while (ip < codes.length){
+      while (ip < codes.length) {
         auto opcode = cast(OpCode)(codes[ip][0].as!(uint));
         final switch(opcode) with (OpCode) {
           case PUSHI:
@@ -169,6 +174,12 @@ class VM {
             auto offset = codes[ip][1].as!(uint);
             this.invoke(offset);
             break;
+
+          case RETURN:
+            auto r = frame.pop();
+            discardFrame();
+            frame.push(r);
+            return;
         }
 
         ip++;

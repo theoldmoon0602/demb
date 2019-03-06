@@ -4,11 +4,12 @@ import pegged.grammar;
 
 mixin(grammar(`
 Demb:
-  TopLevel < (DefunStmt :EndDefun)* DefunStmt? 
+  TopLevel < (DefunStmt :EndDefun)+ eoi
   DefunStmt < "func" :(Spacing+) Identifier "(" ")" BlockStmt
   BlockStmt < "{" Stmts "}"
   Stmts < (Stmt :EndStmt)* (Stmt :EndStmt?)?
-  Stmt < (PrintStmt / AssignStmt / Expression)
+  Stmt < (PrintStmt / AssignStmt / ReturnStmt)
+  ReturnStmt  < "return" Expression
   AssignStmt < Identifier "=" Expression
   PrintStmt < "print" "(" Expression ")"
   Expression < AddSubExpression
@@ -29,8 +30,8 @@ Demb:
   Integer <~ digit (digit / :"_")*
   Identifier <~ identifier
 
-  EndDefun < endOfLine / eoi
-  EndStmt < ";" / endOfLine / eoi
+  EndDefun < ";" / endOfLine
+  EndStmt < ";" / endOfLine
   Spacing <: (' ' / '\t' )*
 `));
 

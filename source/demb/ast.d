@@ -53,6 +53,18 @@ class StmtsAST : AST {
     }
 }
 
+class ReturnAST: AST {
+  public:
+    AST expr;
+    this(AST expr) {
+      this.expr = expr;
+    }
+
+    override AAST analyze(CompileContext ctx) {
+      return new ReturnAAST(this.expr.analyze(ctx));
+    }
+}
+
 class AssignAST: AST {
   public:
     IdentifierAST ident;
