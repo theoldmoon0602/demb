@@ -74,6 +74,6 @@ AST toAST(ParseTree p) {
 
     default:
       auto pos = p.position;
-      throw new DembCompileException("unexpected character %s at (%d,%d)".format((p.matches.length == 0 || p.matches[0].length == 0) ? "''" : ("" ~ p.matches[0][0]), pos.line, pos.col));
+      throw new DembCompileException("unexpected character %s at (%d,%d)".format((pos.index < p.input.length) ? p.input[pos.index..pos.index+1]: "EOF", pos.line, pos.col));
   }
 }

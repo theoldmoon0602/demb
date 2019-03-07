@@ -14,5 +14,6 @@ public import
   demb.builtin,
   demb.compileresult,
   demb.compilecontext,
-  demb.util;
+  demb.util,
+  demb.test;
 
