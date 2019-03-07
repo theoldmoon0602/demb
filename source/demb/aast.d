@@ -1,6 +1,5 @@
 module demb.aast;
 
-import demb.bytecode;
 import demb.exception;
 import demb.opcode;
 import std.typecons;

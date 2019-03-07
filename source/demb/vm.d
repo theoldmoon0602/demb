@@ -12,6 +12,7 @@ import std.algorithm;
 import std.array;
 import std.conv;
 import std.format;
+import std.range;
 
 class Frame {
   protected:
@@ -53,8 +54,10 @@ class Frame {
 
 }
 
-class VM {
+class VM(R) {
   protected:
+    R outrange;
+
     Frame[] frames;
     BuiltinFunc[string] builtins;
 
@@ -74,9 +77,13 @@ class VM {
       ];
     }
   public:
-    this() {
+    this(R)(R outrange)
+      if (isOutputRange!(R, char))
+    {
       frames = [];
       frame_id = 0;
+
+      this.outrange = outrange;
     }
 
     void setBuiltins(BuiltinFunc[] builtins) {
@@ -94,6 +101,7 @@ class VM {
       if (auto f = f_id in builtins) {
         return f.func(args);
       }
+
 
       throw new DembRuntimeException("no function %s for arguments %s".format(name, args.map!(x => x.type).array)); 
     }
@@ -167,7 +175,7 @@ class VM {
 
           case PRINT:
             DembObject arg1 = frame.pop();
-            writeln(arg1.valueString);
+            outrange.put(arg1.valueString ~ "\n");
             break;
 
           case CALL:
@@ -193,4 +201,8 @@ class VM {
 
       this.invoke(c.main_offset);
     }
+}
+
+auto newVM(R)(R outrange) {
+  return new VM!(R)(outrange);
 }

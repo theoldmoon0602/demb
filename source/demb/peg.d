@@ -4,7 +4,7 @@ import pegged.grammar;
 
 mixin(grammar(`
 Demb:
-  TopLevel < (DefunStmt :EndDefun)+ eoi
+  TopLevel < (DefunStmt :EndDefun)+ eoi?
   DefunStmt < "func" :(Spacing+) Identifier "(" ")" BlockStmt
   BlockStmt < "{" Stmts "}"
   Stmts < (Stmt :EndStmt)* (Stmt :EndStmt?)?
@@ -30,7 +30,7 @@ Demb:
   Integer <~ digit (digit / :"_")*
   Identifier <~ identifier
 
-  EndDefun < ";" / endOfLine
+  EndDefun < ";" / endOfLine / eoi
   EndStmt < ";" / endOfLine
   Spacing <: (' ' / '\t' )*
 `));

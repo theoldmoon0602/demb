@@ -4,7 +4,6 @@ module demb;
 public import
   demb.vm,
   demb.object,
-  demb.bytecode,
   demb.opcode,
   demb.exception,
   demb.parser,
@@ -14,5 +13,6 @@ public import
   demb.peg,
   demb.builtin,
   demb.compileresult,
-  demb.compilecontext;
+  demb.compilecontext,
+  demb.util;
 

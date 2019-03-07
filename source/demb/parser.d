@@ -3,12 +3,14 @@ module demb.parser;
 import pegged.grammar;
 import demb.peg;
 import demb.ast;
+import demb.exception;
 import std.algorithm;
 import std.array;
 import std.conv;
+import std.format;
 
 AST toAST(ParseTree p) {
-  final switch (p.name) {
+  switch (p.name) {
     case "Demb":
     case "Demb.Stmt":
     case "Demb.BlockStmt":
@@ -60,7 +62,7 @@ AST toAST(ParseTree p) {
 
     case "Demb.Integer":
       return new IntegerAST(p.matches[0].to!long);
-      
+
     case "Demb.Float":
       return new FloatAST(p.matches[0].to!double);
 
@@ -69,5 +71,9 @@ AST toAST(ParseTree p) {
 
     case "Demb.Identifier":
       return new IdentifierAST(p.matches[0]);
+
+    default:
+      auto pos = p.position;
+      throw new DembCompileException("unexpected character %s at (%d,%d)".format((p.matches.length == 0 || p.matches[0].length == 0) ? "''" : ("" ~ p.matches[0][0]), pos.line, pos.col));
   }
 }
