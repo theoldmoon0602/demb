@@ -3,6 +3,8 @@ module demb.aast;
 import demb.exception;
 import demb.opcode;
 import std.typecons;
+import std.algorithm;
+import std.array;
 import std.string;
 import msgpack;
 
@@ -73,14 +75,16 @@ class ReturnAAST: AAST {
 class CallAAST: AAST {
   public:
     IdentifierIDAAST funcid;
-    this(IdentifierIDAAST funcid) {
+    AAST[] args;
+    this(IdentifierIDAAST funcid, AAST[] args) {
       this.funcid = funcid;
+      this.args = args;
     }
     override ubyte[] compile() {
-      return pack(tuple(OpCode.CALL, funcid.id));
+      return reduce!((a, b) => a ~ b.compile)(cast(ubyte[])[], this.args) ~ pack(tuple!(uint, uint, uint)(OpCode.CALL, funcid.id, cast(uint)this.args.length));
     }
     override string toString() {
-      return "call(" ~ funcid.toString ~ ")";
+      return "call(%s, %s)".format(funcid, args);
     }
 }
 

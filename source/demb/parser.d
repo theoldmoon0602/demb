@@ -25,7 +25,13 @@ AST toAST(ParseTree p) {
       return new TopLevelAST(p.children.map!(x => cast(DefunAST)x.toAST).array);
 
     case "Demb.DefunStmt":
-      return new DefunAST(cast(IdentifierAST)p.children[0].toAST, cast(StmtsAST)p.children[1].toAST);
+      return new DefunAST(
+          cast(IdentifierAST)p.children[0].toAST, // func name
+          cast(DummyArgsAST)p.children[1].toAST,  // dummy args
+          cast(StmtsAST)p.children[2].toAST);     // body
+
+    case "Demb.DummyArgs":
+      return new DummyArgsAST(p.children.map!(x => cast(IdentifierAST)(x.toAST)).array);
 
     case "Demb.Stmts":
       return new StmtsAST(p.children.map!(x => x.toAST).array);
@@ -55,7 +61,12 @@ AST toAST(ParseTree p) {
       return new BinCatAST(p.children[0].toAST, p.children[1].toAST);
 
     case "Demb.CallExpression":
-      return new CallAST(cast(IdentifierAST)p.children[0].toAST);
+      return new CallAST(
+          cast(IdentifierAST)p.children[0].toAST,
+          cast(CallArgsAST)p.children[1].toAST);
+
+    case "Demb.CallArgs":
+      return new CallArgsAST(p.children.map!(toAST).array);
 
     case "Demb.Primary":
       return p.children[0].toAST;

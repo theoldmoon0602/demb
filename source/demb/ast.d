@@ -25,16 +25,37 @@ class TopLevelAST: AST {
 class DefunAST: AST {
   public:
     IdentifierAST name;
+    DummyArgsAST args;
     StmtsAST proc;
 
-    this(IdentifierAST name, StmtsAST proc) {
+    this(IdentifierAST name, DummyArgsAST args, StmtsAST proc) {
       this.name = name;
+      this.args = args;
       this.proc = proc;
     }
 
     override AAST analyze(CompileContext ctx) {
       ctx.addGlobal(name.v);
+      foreach (arg; args.dummy_args) {
+        if (ctx.hasVar(arg.v)) {
+          throw new DembCompileException("Argument name %s is already defiend".format(arg.v));
+        }
+        ctx.addVar(arg.v);
+      }
       return proc.analyze(ctx);
+    }
+}
+
+class DummyArgsAST: AST {
+  public:
+    IdentifierAST[] dummy_args;
+
+    this(IdentifierAST[] dummy_args) {
+      this.dummy_args = dummy_args;
+    }
+
+    override AAST analyze(CompileContext ctx) {
+      throw new DembCompileException("Unexpected Call");
     }
 }
 
@@ -87,14 +108,32 @@ class AssignAST: AST {
 class CallAST: AST{ 
   public:
     IdentifierAST name;
-    this(IdentifierAST name) {
+    CallArgsAST args;
+    this(IdentifierAST name, CallArgsAST args) {
       this.name = name;
+      this.args = args;
     }
     override AAST analyze(CompileContext ctx) {
       if (!ctx.hasGlobal(name.v)) {
         throw new DembCompileException("No such function %s".format(name.v));
       }
-      return new CallAAST(new IdentifierIDAAST(ctx.getGlobalId(name.v)));
+      AAST[] args_aast = [];
+      foreach (arg; this.args.args) {
+        args_aast ~= arg.analyze(ctx);
+      }
+      return new CallAAST(new IdentifierIDAAST(ctx.getGlobalId(name.v)), args_aast);
+    }
+}
+
+class CallArgsAST: AST {
+  public:
+    AST[] args;
+    this(AST[] args) {
+      this.args = args;
+    }
+
+    override AAST analyze(CompileContext ctx) {
+      throw new DembCompileException("Unexpected Call");
     }
 }
 

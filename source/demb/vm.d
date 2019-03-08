@@ -22,8 +22,10 @@ class Frame {
     uint sp;
 
   public:
-    this(uint local_count) {
+    this(uint local_count, DembObject[] args) {
       locals = new DembObject[](local_count);
+      this.locals[0..args.length] = args;
+
       stack = new DembObject[](10);
       sp = 0;
     }
@@ -112,13 +114,13 @@ class VM(R) {
       frame_id--;
     }
 
-    void newFrame(uint local_count) {
+    void newFrame(uint local_count, DembObject[] args) {
       assert(frame_id <= frames.length);
 
       if (frame_id == frames.length) {
-        frames ~= new Frame(local_count);
+        frames ~= new Frame(local_count, args);
       } else {
-        frames[frame_id] = new Frame(local_count);
+        frames[frame_id] = new Frame(local_count, args);
       }
 
       frame_id++;
@@ -128,10 +130,10 @@ class VM(R) {
       return this.frames[frame_id-1];
     }
 
-    void invoke(uint func_offset) {
+    void invoke(uint func_offset, DembObject[] args) {
       int ip = 0;
       auto codes = StreamingUnpacker(this.func_pool[func_offset].proc).array;
-      this.newFrame(this.func_pool[func_offset].local_count);
+      this.newFrame(this.func_pool[func_offset].local_count, args);
 
       while (ip < codes.length) {
         auto opcode = cast(OpCode)(codes[ip][0].as!(uint));
@@ -179,8 +181,13 @@ class VM(R) {
             break;
 
           case CALL:
-            auto offset = codes[ip][1].as!(uint);
-            this.invoke(offset);
+            auto f_offset = codes[ip][1].as!(uint);
+            auto numof_args = codes[ip][2].as!(uint);
+            auto f_args = new DembObject[](numof_args);
+            foreach_reverse (i; 0..numof_args) {
+              f_args[i] = this.frame.pop();
+            }
+            this.invoke(f_offset, f_args);
             break;
 
           case RETURN:
@@ -199,7 +206,7 @@ class VM(R) {
       string_pool = c.strs;
       func_pool = c.funcs;
 
-      this.invoke(c.main_offset);
+      this.invoke(c.main_offset, []);
     }
 }
 

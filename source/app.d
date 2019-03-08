@@ -2,6 +2,7 @@ import std.stdio;
 import std.string;
 import std.array;
 import demb;
+import msgpack;
 
 void main()
 {
