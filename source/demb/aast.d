@@ -17,6 +17,85 @@ abstract class AAST {
 }
 
 
+class IfAAST: AAST {
+  public:
+    AAST[] exprs;
+    StmtsAAST[] blocks;
+    StmtsAAST else_block;
+
+    this(AAST[] exprs, StmtsAAST[] blocks, StmtsAAST else_block) {
+      assert(exprs.length == blocks.length);
+      this.exprs = exprs;
+      this.blocks = blocks;
+      this.else_block = else_block;
+    }
+
+    override ubyte[] compile() {
+      /*
+         COND
+         JIF IF-A
+         COND
+         JIF IF-B
+         JMP ELSE
+         IF-A...
+         JMP ELSE
+         IF-B...
+         JMP ELSE
+         [ELSE...]
+      */
+      uint[] jump_at = [];
+      uint[] block_at = [];
+      uint jumpto = 0;
+      ubyte[] code = [];
+
+      // prebuild
+      foreach (expr; exprs) {
+        code ~= expr.compile();
+        jump_at ~= cast(uint)(StreamingUnpacker(code).array.length);
+        code ~= pack(tuple!(uint, uint)(OpCode.JIF, 0));
+      }
+      code ~= pack(tuple!(uint, uint)(OpCode.JUMP, 0));
+
+      foreach (i, block; blocks) {
+        block_at ~= cast(uint)(StreamingUnpacker(code).array.length);
+        code ~= block.compile() ~ pack(tuple!(uint, uint)(OpCode.JUMP, 0));
+      }
+      jumpto = cast(uint)(StreamingUnpacker(code).array.length);
+
+      code.length = 0;
+
+      // mainbuild
+      foreach (i, expr; exprs) {
+        code ~= expr.compile() ~ pack(tuple!(uint, uint)(OpCode.JIF, cast(uint)(block_at[i] - jump_at[i])));
+      }
+      code ~= pack(tuple!(uint, uint)(OpCode.JUMP, jumpto - jump_at[$-1] - 1));
+
+      foreach (i, block; blocks) {
+        code ~= block.compile() ~ pack(tuple!(uint, uint)(OpCode.JUMP, jumpto - block_at[i]));
+      }
+      if (else_block) {
+        code ~= else_block.compile();
+      }
+      return code;
+    }
+
+    override string toString() {
+      string[] s = [];
+      foreach (i; 0..exprs.length) {
+        if (i == 0) {
+          s ~= "if (%s) { %s }".format(exprs[i], blocks[i]);
+        }
+        else {
+          s ~= "else if (%s) { %s }".format(exprs[i], blocks[i]);
+        }
+      }
+      if (else_block) {
+        s ~= "else { %s }".format(else_block);
+      }
+      return s.join("\n");
+    }
+}
+
 class StmtsAAST: AAST {
   public:
     AAST[] stmts;
@@ -95,7 +174,7 @@ class PrintAAST: AAST {
       this.arg = arg;
     }
     override ubyte[] compile() {
-      return arg.compile() ~ pack(tuple!(int)(OpCode.PRINT));
+      return arg.compile() ~ pack(tuple!(uint)(OpCode.PRINT));
     }
     override string toString() {
       return "print(" ~ arg.toString ~ ")";
@@ -110,7 +189,7 @@ class BinopAAST(OpCode opcode): AAST {
       this.right = right;
     }
     override ubyte[] compile() {
-      return left.compile() ~ right.compile() ~ pack(tuple!(int)(opcode));
+      return left.compile() ~ right.compile() ~ pack(tuple!(uint)(opcode));
     }
     override string toString() {
       return "%s %s %s".format(left.toString, opcode, right.toString);
@@ -122,6 +201,35 @@ alias BinSubAAST = BinopAAST!(OpCode.SUB);
 alias BinMulAAST = BinopAAST!(OpCode.MUL);
 alias BinDivAAST = BinopAAST!(OpCode.DIV);
 alias BinCatAAST = BinopAAST!(OpCode.CONCAT);
+
+class CmpAAST: AAST {
+  public:
+    static OpCode[string] opcodes;
+    static this() {
+      this.opcodes = [
+        "==": OpCode.EQ,
+        "!=": OpCode.NEQ,
+        "<": OpCode.LT,
+        "<=": OpCode.LE,
+        ">": OpCode.GT,
+        ">=": OpCode.GE,
+      ];
+    }
+    AAST left, right;
+    string op;
+    this(AAST left, AAST right, string op) {
+      assert(op in opcodes);
+      this.left = left;
+      this.right = right;
+      this.op = op;
+    }
+    override ubyte[] compile() {
+      return left.compile() ~ right.compile() ~ pack(tuple!(uint)(opcodes[op]));
+    }
+    override string toString() {
+      return "%s %s %s".format(left.toString, op, right.toString);
+    }
+}
 
 
 class LiteralAAST(T, OpCode opcode): AAST {

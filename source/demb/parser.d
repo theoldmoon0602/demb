@@ -15,14 +15,35 @@ AST toAST(ParseTree p) {
     case "Demb.Stmt":
     case "Demb.BlockStmt":
     case "Demb.Expression":
+    case "Demb.EqualityExpression":
+    case "Demb.CompareExpression":
     case "Demb.AddSubExpression":
     case "Demb.MulDivExpression":
     case "Demb.CallLevelExpression":
     case "Demb.CatExpression":
+    case "Demb.Else":
       return p.children[0].toAST;
 
     case "Demb.TopLevel":
       return new TopLevelAST(p.children.map!(x => cast(DefunAST)x.toAST).array);
+
+    case "Demb.IfStmt":
+      AST[] exprs;
+      StmtsAST[] blocks;
+      StmtsAST else_block = null;
+      
+      foreach (i, p2; p.children) {
+        if (p2.name == "Demb.Else") {
+          else_block = cast(StmtsAST)(p2.toAST);
+        }
+        else if (i % 2 == 0) {
+          exprs ~= p2.toAST;
+        }
+        else {
+          blocks ~= cast(StmtsAST)(p2.toAST);
+        }
+      }
+      return new IfAST(exprs, blocks, else_block);
 
     case "Demb.DefunStmt":
       return new DefunAST(
@@ -44,6 +65,14 @@ AST toAST(ParseTree p) {
 
     case "Demb.ReturnStmt":
       return new ReturnAST(p.children[0].toAST);
+
+    case "Demb.EqualExpression":
+    case "Demb.NotEqualExpression":
+    case "Demb.LessThanExpression":
+    case "Demb.LessThanEqualExpression":
+    case "Demb.MoreThanExpression":
+    case "Demb.MoreThanEqualExpression":
+      return new CmpAST(p.children[0].toAST, p.children[1].toAST, p.matches[1]);
 
     case "Demb.AddExpression":
       return new BinAddAST(p.children[0].toAST, p.children[1].toAST);

@@ -75,7 +75,12 @@ class VM(R) {
         OpCode.SUB: "-",
         OpCode.MUL: "*",
         OpCode.DIV: "/",
-        OpCode.CONCAT: "~",
+        OpCode.EQ: "==",
+        OpCode.NEQ: "!=",
+        OpCode.LT: "<",
+        OpCode.LE: "<=",
+        OpCode.GT: ">",
+        OpCode.GE: ">=",
       ];
     }
   public:
@@ -137,6 +142,7 @@ class VM(R) {
 
       while (ip < codes.length) {
         auto opcode = cast(OpCode)(codes[ip][0].as!(uint));
+
         final switch(opcode) with (OpCode) {
           case PUSHI:
             frame.push(new IntegerObject(codes[ip][1].as!(long)));
@@ -145,17 +151,16 @@ class VM(R) {
           case PUSHF:
             frame.push(new FloatObject(codes[ip][1].as!(double)));
             break;
-            
+
           case PUSHS:
             auto str_id = codes[ip][1].as!(uint);
             auto strobj = new StringObject(string_pool[str_id]);
             frame.push(strobj);
             break;
 
-          case ADD:
-          case SUB:
-          case MUL:
-          case DIV:
+          case EQ: case NEQ:
+          case LT: case LE: case GT: case GE:
+          case ADD: case SUB: case MUL: case DIV:
           case CONCAT:
             auto arg2 = frame.pop();
             auto arg1 = frame.pop();
@@ -195,6 +200,25 @@ class VM(R) {
             discardFrame();
             frame.push(r);
             return;
+
+          case JUMP:
+            auto offset = codes[ip][1].as!(uint);
+            ip += offset;
+            ip--;
+            break;
+
+          case JIF:
+            auto offset = codes[ip][1].as!(uint);
+            auto cond = frame.pop();
+            if (auto cond_b = cast(BooleanObject)(cond)) {
+              if (cond_b.v) {
+                ip += offset;
+                ip--;
+              }
+            } else {
+              throw new DembRuntimeException("Boolen expected");
+            }
+            break;
         }
 
         ip++;

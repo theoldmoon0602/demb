@@ -9,11 +9,21 @@ Demb:
   DummyArgs < "(" (Identifier ",")* Identifier? ")"
   BlockStmt < "{" Stmts "}"
   Stmts < (Stmt :EndStmt)* (Stmt :EndStmt?)?
-  Stmt < (PrintStmt / AssignStmt / ReturnStmt)
+  Stmt < (PrintStmt / AssignStmt / ReturnStmt / IfStmt )
   ReturnStmt  < "return" Expression
   AssignStmt < Identifier "=" Expression
   PrintStmt < "print" "(" Expression ")"
-  Expression < AddSubExpression
+  IfStmt < "if" "(" Expression ")" BlockStmt ("else" "if" "(" Expression ")" BlockStmt)*  Else?
+  Else < ("else" BlockStmt)
+  Expression < EqualityExpression
+  EqualityExpression < EqualExpression / NotEqualExpression / CompareExpression
+  EqualExpression < EqualityExpression "==" CompareExpression
+  NotEqualExpression < EqualityExpression "!=" CompareExpression
+  CompareExpression < LessThanExpression / LessThanEqualExpression / MoreThanExpression / MoreThanEqualExpression / AddSubExpression
+  LessThanExpression < CompareExpression "<" AddSubExpression
+  LessThanEqualExpression < CompareExpression "<=" AddSubExpression
+  MoreThanExpression < CompareExpression ">" AddSubExpression
+  MoreThanEqualExpression < CompareExpression ">=" AddSubExpression
   AddSubExpression < AddExpression / SubExpression / MulDivExpression
   AddExpression < AddSubExpression "+" MulDivExpression
   SubExpression < AddSubExpression "-" MulDivExpression

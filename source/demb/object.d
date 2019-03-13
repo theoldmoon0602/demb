@@ -12,63 +12,27 @@ abstract class DembObject {
     abstract string valueString() const;
 }
 
-class IntegerObject : DembObject {
+class BuiltinType(T, string name): DembObject {
   public:
-    long v;
+    T v;
 
-    this(long v) pure {
+    this(T v) pure {
       this.v = v;
     }
 
     static string type_static() {
-      return "Integer";
+      return name;
     }
 
     override string type() const pure {
-      return "Integer";
+      return name;
     }
     override string valueString() const {
-      return "%d".format(v);
+      return "%s".format(v);
     }
 }
 
-class FloatObject : DembObject {
-  public:
-    double v;
-
-    this(double v) pure {
-      this.v = v;
-    }
-
-    static string type_static() {
-      return "Float";
-    }
-
-    override string type() const pure {
-      return "Float";
-    }
-    override string valueString() const {
-      return "%f".format(v);
-    }
-}
-
-class StringObject : DembObject {
-  public:
-    string v;
-
-    this(string v) pure {
-      this.v = v;
-    }
-
-    static string type_static() {
-      return "String";
-    }
-
-    override string type() const pure {
-      return "String";
-    }
-    override string valueString() const {
-      return this.v;
-    }
-}
-
+alias BooleanObject = BuiltinType!(bool, "Boolean");
+alias IntegerObject = BuiltinType!(long, "Integer");
+alias FloatObject   = BuiltinType!(double, "Float");
+alias StringObject  = BuiltinType!(string, "String");

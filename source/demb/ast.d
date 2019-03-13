@@ -59,6 +59,41 @@ class DummyArgsAST: AST {
     }
 }
 
+class IfAST: AST {
+  public:
+    AST[] exprs;
+    StmtsAST[] blocks;
+    StmtsAST else_block;
+
+    this(AST[] exprs, StmtsAST[] blocks, StmtsAST else_block) {
+      assert(exprs.length == blocks.length);
+
+      this.exprs = exprs;
+      this.blocks = blocks;
+      this.else_block = else_block;
+    }
+
+    override AAST analyze(CompileContext ctx) {
+      AAST[] a_exprs = [];
+      StmtsAAST[] a_blocks = [];
+      StmtsAAST a_else = null;
+      foreach (i; 0..exprs.length) {
+        a_exprs ~= exprs[i].analyze(ctx);
+
+        ctx.newScope();
+        a_blocks ~= cast(StmtsAAST)(blocks[i].analyze(ctx));
+        ctx.scopeout();
+      }
+      if (else_block) {
+        ctx.newScope();
+        a_else = cast(StmtsAAST)(else_block.analyze(ctx));
+        ctx.scopeout();
+      }
+
+      return new IfAAST(a_exprs, a_blocks, a_else);
+    }
+}
+
 class StmtsAST : AST {
   public:
     AST[] stmts;
@@ -168,6 +203,23 @@ alias BinSubAST = BinopAST!BinSubAAST;
 alias BinMulAST = BinopAST!BinMulAAST;
 alias BinDivAST = BinopAST!BinDivAAST;
 alias BinCatAST = BinopAST!BinCatAAST;
+
+class CmpAST: AST {
+  public:
+    AST left, right;
+    string op;
+    this(AST left, AST right, string op) {
+      this.left = left;
+      this.right = right;
+      this.op = op;
+    }
+
+    override AAST analyze(CompileContext ctx) {
+      auto l = left.analyze(ctx);
+      auto r = right.analyze(ctx);
+      return new CmpAAST(l, r, op);
+    }
+}
 
 class LiteralAST(T, U): AST {
   public:
