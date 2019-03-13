@@ -183,28 +183,7 @@ class PrintAST : AST {
     }
 }
 
-class BinopAST(T) : AST {
-  public:
-    AST left, right;
-    this(AST left, AST right) {
-      this.left = left;
-      this.right = right;
-    }
-    override AAST analyze(CompileContext ctx) {
-      auto l = left.analyze(ctx);
-      auto r = right.analyze(ctx);
-
-      return new T(l, r);
-    }
-}
-
-alias BinAddAST = BinopAST!BinAddAAST;
-alias BinSubAST = BinopAST!BinSubAAST;
-alias BinMulAST = BinopAST!BinMulAAST;
-alias BinDivAST = BinopAST!BinDivAAST;
-alias BinCatAST = BinopAST!BinCatAAST;
-
-class CmpAST: AST {
+class BinopAST: AST {
   public:
     AST left, right;
     string op;
@@ -217,7 +196,7 @@ class CmpAST: AST {
     override AAST analyze(CompileContext ctx) {
       auto l = left.analyze(ctx);
       auto r = right.analyze(ctx);
-      return new CmpAAST(l, r, op);
+      return new BinopAAST(l, r, op);
     }
 }
 

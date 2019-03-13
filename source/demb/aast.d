@@ -181,32 +181,16 @@ class PrintAAST: AAST {
     }
 }
 
-class BinopAAST(OpCode opcode): AAST {
-  public:
-    AAST left, right;
-    this(AAST left, AAST right) {
-      this.left = left;
-      this.right = right;
-    }
-    override ubyte[] compile() {
-      return left.compile() ~ right.compile() ~ pack(tuple!(uint)(opcode));
-    }
-    override string toString() {
-      return "%s %s %s".format(left.toString, opcode, right.toString);
-    }
-}
-
-alias BinAddAAST = BinopAAST!(OpCode.ADD);
-alias BinSubAAST = BinopAAST!(OpCode.SUB);
-alias BinMulAAST = BinopAAST!(OpCode.MUL);
-alias BinDivAAST = BinopAAST!(OpCode.DIV);
-alias BinCatAAST = BinopAAST!(OpCode.CONCAT);
-
-class CmpAAST: AAST {
+class BinopAAST: AAST {
   public:
     static OpCode[string] opcodes;
     static this() {
       this.opcodes = [
+        "+": OpCode.ADD,
+        "-": OpCode.SUB,
+        "*": OpCode.MUL,
+        "/": OpCode.DIV,
+        "~": OpCode.CONCAT,
         "==": OpCode.EQ,
         "!=": OpCode.NEQ,
         "<": OpCode.LT,
@@ -218,7 +202,7 @@ class CmpAAST: AAST {
     AAST left, right;
     string op;
     this(AAST left, AAST right, string op) {
-      assert(op in opcodes);
+      assert(op in opcodes, op);
       this.left = left;
       this.right = right;
       this.op = op;

@@ -72,22 +72,12 @@ AST toAST(ParseTree p) {
     case "Demb.LessThanEqualExpression":
     case "Demb.MoreThanExpression":
     case "Demb.MoreThanEqualExpression":
-      return new CmpAST(p.children[0].toAST, p.children[1].toAST, p.matches[1]);
-
     case "Demb.AddExpression":
-      return new BinAddAST(p.children[0].toAST, p.children[1].toAST);
-
     case "Demb.SubExpression":
-      return new BinSubAST(p.children[0].toAST, p.children[1].toAST);
-
     case "Demb.MulExpression":
-      return new BinMulAST(p.children[0].toAST, p.children[1].toAST);
-
     case "Demb.DivExpression":
-      return new BinDivAST(p.children[0].toAST, p.children[1].toAST);
-
     case "Demb.ConCatExpression":
-      return new BinCatAST(p.children[0].toAST, p.children[1].toAST);
+      return new BinopAST(p.children[0].toAST, p.children[2].toAST, p.children[1].matches[0]);
 
     case "Demb.CallExpression":
       return new CallAST(
